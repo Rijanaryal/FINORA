@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b1014" />
+    <meta name="description" content="Rijan's personal FINORA dashboard for tracking income, spending, budgets, and savings." />
+    <link rel="icon" type="image/svg+xml" href="finora-icon.svg" />
+    <link rel="apple-touch-icon" href="finora-icon.svg" />
+    <title>FINORA — Rijan's personal money space</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <canvas id="ambient" aria-hidden="true"></canvas>
+    <section class="welcome-screen" id="welcome-screen" aria-labelledby="welcome-title" aria-hidden="true">
+      <div class="welcome-glow"></div>
+      <div class="welcome-content">
+        <div class="welcome-art" aria-hidden="true">
+          <canvas id="welcome-scene"></canvas>
+          <span class="art-orbit orbit-one"></span>
+          <span class="art-orbit orbit-two"></span>
+        </div>
+        <p class="welcome-kicker"><span></span> YOUR OWN LITTLE MONEY UNIVERSE</p>
+        <h2 id="welcome-title">Welcome,<br /><span>Rijan.</span></h2>
+        <p class="welcome-message">FINORA is only for you.</p>
+        <button class="welcome-enter" id="welcome-enter" type="button">Enter your space <span>↗</span></button>
+        <span class="welcome-private">PERSONAL · PRIVATE · YOURS</span>
+      </div>
+    </section>
+    <div class="cursor-dot" aria-hidden="true"></div>
+
+    <div class="app">
+      <aside class="sidebar">
+        <a class="brand" href="#" aria-label="FINORA home">
+          <svg class="brand-mark" viewBox="0 0 42 42" role="img" aria-label="FINORA logo">
+            <path d="M21 2.8 38.2 12.7v16.6L21 39.2 3.8 29.3V12.7L21 2.8Z" fill="currentColor" opacity=".14"/>
+            <path d="M12 29V13h18M12 21h14" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="29.5" cy="28.5" r="3" fill="#b5f36d"/>
+          </svg>
+          <span>FINORA<span class="brand-period">.</span></span>
+        </a>
+
+        <div class="side-label">MY SPACE</div>
+        <nav class="side-nav" aria-label="Main navigation">
+          <a class="side-link active" href="#overview"><span class="nav-icon">⌂</span>Overview</a>
+          <a class="side-link" href="#activity"><span class="nav-icon">↕</span>Transactions</a>
+          <a class="side-link" href="#activity" data-entry-filter="income"><span class="nav-icon">↓</span>Income</a>
+          <a class="side-link" href="#activity" data-entry-filter="expense"><span class="nav-icon">↑</span>Expenses</a>
+          <a class="side-link" href="#budgets"><span class="nav-icon">▤</span>Budgets</a>
+          <a class="side-link" href="#spending"><span class="nav-icon">▥</span>Analytics</a>
+          <a class="side-link" href="#insights"><span class="nav-icon">✳</span>Insights</a>
+        </nav>
+
+        <div class="side-label settings-label">PERSONAL</div>
+        <div class="side-nav"><a class="side-link" href="#privacy"><span class="nav-icon">◈</span>Privacy &amp; data</a></div>
+        <div class="sidebar-bottom">
+          <div class="privacy-note">
+            <span class="privacy-icon">◈</span>
+            <div><strong>Just for you</strong><p>Your entries stay in this browser.</p></div>
+          </div>
+          <div class="profile-chip">
+            <span class="avatar">R</span>
+            <span><strong>Rijan</strong><small>Personal space</small></span>
+            <span class="more">···</span>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main-content" id="overview">
+        <header class="topbar">
+          <div class="breadcrumb"><span>My space</span><span class="crumb-slash">/</span><strong>Overview</strong></div>
+          <div class="top-actions">
+            <label class="search-box"><span>⌕</span><input id="entry-search" type="search" placeholder="Search entries..." aria-label="Search transactions" /></label>
+            <label class="currency-picker" for="currency">Currency
+              <select id="currency" aria-label="Display currency">
+                <option value="NPR">NPR</option>
+                <option value="USD">USD</option>
+                <option value="INR">INR</option>
+              </select>
+            </label>
+            <button class="button button-primary add-trigger" type="button"><span>＋</span><span class="add-label">Add entry</span></button>
+          </div>
+        </header>
+
+        <section class="welcome-row">
+          <div>
+            <p class="overline"><span class="live-dot"></span> YOUR PERSONAL MONEY</p>
+            <h1 id="greeting">Good day, Rijan <span>✦</span></h1>
+            <p class="welcome-sub">Here’s your money at a glance. Add your own entries to get started.</p>
+          </div>
+          <label class="period-control"><span>▣</span>
+            <select id="period" aria-label="Choose reporting period">
+              <option value="month">This month</option>
+              <option value="all">All time</option>
+            </select>
+          </label>
+        </section>
+
+        <section class="metric-grid" aria-label="Your financial summary">
+          <article class="metric-card balance-card">
+            <div class="metric-top"><span>Money you have</span><button class="balance-edit" id="edit-balance" type="button" aria-label="Set your starting balance">Set amount</button></div>
+            <p class="metric-value" id="balance-value">Rs 0</p>
+            <div class="metric-foot"><span class="metric-dot"></span><span id="balance-note">Starting balance + all entries</span></div>
+          </article>
+          <article class="metric-card">
+            <div class="metric-top"><span>Money in</span><span class="metric-symbol in">↘</span></div>
+            <p class="metric-value" id="income-value">Rs 0</p>
+            <div class="metric-foot"><span class="small-dot green"></span>Income recorded</div>
+          </article>
+          <article class="metric-card">
+            <div class="metric-top"><span>Money out</span><span class="metric-symbol out">↗</span></div>
+            <p class="metric-value" id="expense-value">Rs 0</p>
+            <div class="metric-foot"><span class="small-dot coral"></span>Spending recorded</div>
+          </article>
+          <article class="metric-card savings-card">
+            <div class="metric-top"><span>Kept this period</span><span class="metric-symbol keep">✳</span></div>
+            <p class="metric-value" id="saved-value">Rs 0</p>
+            <div class="metric-foot"><span class="small-dot lime"></span><span id="saved-rate">Add entries to see your savings rate</span></div>
+            <div class="save-track"><span id="save-progress"></span></div>
+          </article>
+        </section>
+
+        <section class="charts-grid" id="analytics">
+          <article class="panel flow-panel">
+            <div class="panel-heading">
+              <div><p class="overline">CASH FLOW</p><h2>Income &amp; expenses</h2></div>
+              <span class="chart-legend"><i class="legend-in"></i>In <i class="legend-out"></i>Out</span>
+            </div>
+            <div class="chart-area" id="flow-chart">
+              <div class="empty-chart" id="flow-empty"><span class="empty-icon">⌁</span><strong>Your cash flow will show here</strong><span>Add income or an expense to start your chart.</span></div>
+              <svg class="flow-svg" id="flow-svg" viewBox="0 0 700 220" preserveAspectRatio="none" role="img" aria-label="Income and expenses over the last six months"></svg>
+            </div>
+            <div class="chart-months" id="chart-months"><span>—</span><span>—</span><span>—</span><span>—</span><span>—</span><span>—</span></div>
+          </article>
+
+          <article class="panel categories-panel">
+            <div class="panel-heading">
+              <div><p class="overline">WHERE IT GOES</p><h2>Your spending</h2></div>
+              <span class="panel-more" title="Based on your expense entries">···</span>
+            </div>
+            <div class="category-content">
+              <div class="donut-wrap">
+                <svg id="category-donut" viewBox="0 0 160 160" role="img" aria-label="Spending by category"></svg>
+                <div class="donut-center"><span>SPENT</span><strong id="donut-total">Rs 0</strong></div>
+              </div>
+              <div class="category-legend" id="category-legend">
+                <div class="empty-categories">Your categories will appear here after you add expenses.</div>
+              </div>
+            </div>
+          </article>
+          <article class="panel budgets-panel" id="budgets">
+            <div class="panel-heading">
+              <div><p class="overline">YOUR LIMITS</p><h2>Monthly budgets</h2></div>
+              <button class="text-button" id="add-budget" type="button">＋ Add</button>
+            </div>
+            <div id="budget-list" class="budget-list">
+              <div class="empty-budget">Set a monthly limit for a category to track how you’re doing.</div>
+            </div>
+          </article>
+        </section>
+
+        <section class="panel spending-chart-panel" id="spending">
+          <div class="panel-heading">
+            <div><p class="overline">YOUR SPENDING</p><h2>How much you spend</h2></div>
+            <div class="spend-total"><span>Last 6 months</span><strong id="spend-chart-total">Rs 0</strong></div>
+          </div>
+          <div class="spend-chart-area">
+            <div class="empty-chart" id="spend-empty"><span class="empty-icon">↗</span><strong>Your spending graph is ready</strong><span>Add expenses to see your monthly total here.</span></div>
+            <svg class="spend-svg" id="spend-svg" viewBox="0 0 700 190" preserveAspectRatio="none" role="img" aria-label="Monthly spending for the last six months"></svg>
+          </div>
+          <div class="chart-months" id="spend-months"><span>—</span><span>—</span><span>—</span><span>—</span><span>—</span><span>—</span></div>
+        </section>
+
+        <section class="panel insight-panel" id="insights">
+          <span class="insight-glyph">✳</span>
+          <div><p class="overline">A NOTE FROM YOUR NUMBERS</p><strong id="insight-title">Your first insight is waiting.</strong><p id="insight-copy">Add your income and spending to see a summary based on your own entries.</p></div>
+          <button class="text-button add-trigger" type="button">Add an entry →</button>
+        </section>
+
+        <section class="panel transactions-panel" id="activity">
+          <div class="panel-heading transactions-heading">
+            <div><p class="overline">YOUR ACTIVITY</p><h2>Recent transactions</h2></div>
+            <div class="activity-actions"><select id="type-filter" aria-label="Filter transaction type"><option value="all">All activity</option><option value="income">Income</option><option value="expense">Expenses</option></select><button class="text-button add-trigger" type="button">＋ Add entry</button></div>
+          </div>
+          <div class="transaction-table">
+            <div class="table-head"><span>DETAIL</span><span>CATEGORY</span><span>DATE</span><span>AMOUNT</span><span></span></div>
+            <div id="transaction-list">
+              <div class="empty-transactions"><span class="empty-icon">＋</span><strong>No entries yet</strong><span>Add your first income or expense to see your money activity here.</span><button class="button button-secondary add-trigger" type="button">Add your first entry</button></div>
+            </div>
+          </div>
+        </section>
+
+        <footer class="footer" id="privacy"><span>FINORA<span class="brand-period">.</span> — your personal money space.</span><span>Private by design · stored on this device <i class="footer-lock">◈</i></span></footer>
+      </main>
+    </div>
+
+    <dialog class="entry-dialog" id="entry-dialog" aria-labelledby="dialog-title">
+      <form id="entry-form">
+        <div class="dialog-heading"><div><p class="overline">YOUR MONEY</p><h2 id="dialog-title">Add an entry</h2></div><button class="close-button" type="button" aria-label="Close dialog">×</button></div>
+        <div class="type-switch" role="group" aria-label="Entry type">
+          <button type="button" class="type-button selected" data-type="expense">Expense</button>
+          <button type="button" class="type-button" data-type="income">Income</button>
+        </div>
+        <input type="hidden" name="type" value="expense" />
+        <label class="form-label">What was it for?
+          <input name="title" type="text" maxlength="70" placeholder="e.g. Groceries, salary" required />
+        </label>
+        <div class="form-row">
+          <label class="form-label">Amount
+            <input name="amount" type="number" min="0.01" step="0.01" placeholder="0.00" required />
+          </label>
+          <label class="form-label">Category
+            <select name="category" required>
+              <option value="Food">Food</option><option value="Home">Home</option><option value="Transport">Transport</option><option value="Shopping">Shopping</option><option value="Health">Health</option><option value="Bills">Bills</option><option value="Education">Education</option><option value="Fun">Fun</option><option value="Work">Work</option><option value="Other">Other</option>
+            </select>
+          </label>
+        </div>
+        <label class="form-label">Date
+          <input name="date" type="date" required />
+        </label>
+        <button class="button button-primary submit-entry" type="submit">Save entry <span>→</span></button>
+        <p class="form-note">Saved only in this browser. You can remove entries any time.</p>
+      </form>
+    </dialog>
+
+    <dialog class="entry-dialog" id="budget-dialog" aria-labelledby="budget-dialog-title">
+      <form id="budget-form">
+        <div class="dialog-heading"><div><p class="overline">YOUR MONTHLY PLAN</p><h2 id="budget-dialog-title">Set a budget</h2></div><button class="close-button budget-close" type="button" aria-label="Close dialog">×</button></div>
+        <label class="form-label">Category
+          <select name="category" required><option value="Food">Food</option><option value="Home">Home</option><option value="Transport">Transport</option><option value="Shopping">Shopping</option><option value="Health">Health</option><option value="Bills">Bills</option><option value="Education">Education</option><option value="Fun">Fun</option><option value="Other">Other</option></select>
+        </label>
+        <label class="form-label">Monthly limit
+          <input name="amount" type="number" min="0.01" step="0.01" placeholder="0.00" required />
+        </label>
+        <button class="button button-primary submit-entry" type="submit">Save budget <span>→</span></button>
+        <p class="form-note">Your monthly spending will be compared with this limit.</p>
+      </form>
+    </dialog>
+
+    <dialog class="entry-dialog" id="balance-dialog" aria-labelledby="balance-dialog-title">
+      <form id="balance-form">
+        <div class="dialog-heading"><div><p class="overline">YOUR MONEY</p><h2 id="balance-dialog-title">Set money you have</h2></div><button class="close-button balance-close" type="button" aria-label="Close dialog">×</button></div>
+        <label class="form-label">Starting balance
+          <input name="amount" type="number" min="0" step="0.01" placeholder="0.00" required />
+        </label>
+        <p class="form-note balance-form-note">Enter what you have before the entries you track here. Future income and expenses update this balance.</p>
+        <button class="button button-primary submit-entry" type="submit">Save balance <span>→</span></button>
+      </form>
+    </dialog>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
